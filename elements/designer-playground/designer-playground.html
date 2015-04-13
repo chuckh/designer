@@ -18,6 +18,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../designer-breadcrumb/designer-breadcrumb.html">
 <link rel="import" href="../designer-file-tree/designer-file-tree.html">
 <link rel="import" href="../designer-inspector/designer-inspector.html">
+<link rel="import" href="../designer-logic-editor/designer-logic-editor.html">
 <link rel="import" href="../designer-stage/designer-stage.html">
 <link rel="import" href="designer-demo-files.html">
 
@@ -82,23 +83,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     #main > nav > designer-inspector {
       flex: 1;
     }
-    #main > #doc-view {
+    #editor-panel {
       display: flex;
-      flex-direction: column;
       flex: 1;
       order: 5;
     }
-    #main > #doc-view > designer-stage {
+    #editor-panel > * {
+      display: flex;
+      flex-direction: column;
       flex: 1;
     }
-    #main > #doc-view > #html {
+    #doc-view > designer-stage {
+      flex: 1;
+    }
+    #doc-view > #html {
       flex: 0 0 400px;
       border-top: solid 1px #888;
       margin: 0;
       padding: 8px;
       overflow: auto;
       /*background: #212121;*/
-      color: #888;
+      color: #444;
     }
     #frame {
       position: absolute;
@@ -119,10 +124,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <core-toolbar class="core-header">
         <!-- <paper-icon-button icon="menu" title="menu"></paper-icon-button> -->
         <img class="d-logo" src="PolymerLabs.png">
+        <paper-tabs selected="{{_selectedEditor}}" noink>
+          <paper-tab>Storyboard</paper-tab>
+          <paper-tab>Layout</paper-tab>
+          <paper-tab>Logic</paper-tab>
+        </paper-tabs>
       </core-toolbar>
       <div id="main" class="content">
         <nav>
-          <paper-tabs selected="{{_selectedNavTab}}" noink noslide>
+          <paper-tabs selected="{{_selectedNavTab}}" noink>
             <paper-tab>Files</paper-tab>
             <paper-tab>Outline</paper-tab>
           </paper-tabs>
@@ -143,24 +153,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               element-info="{{currentElementInfo}}">
           </designer-inspector>
         </nav>
-        <div id="doc-view">
-          <designer-document
-              id="document"
-              source="[[documentSource]]"
-              url="[[documentUrl]]"
-              text-content="{{textContent}}">
-          </designer-document>
-          <designer-breadcrumb node="{{currentNode}}"></designer-breadcrumb>
-          <designer-stage
-              id="stage"
-              document="[[document]]"
-              frame="[[frame]]"
-              current-element-info="{{currentElementInfo}}"
-              on-designer-command="_onDesignerCommand">
-            <designer-frame id="frame" document="[[domDocument]]"></designer-frame>
-          </designer-stage>
-          <pre id="html">[[textContent]]</pre>
-        </div>
+        <core-pages id="editor-panel" selected="{{_selectedEditor}}">
+          <div id="storyboard">
+            Storyboard
+          </div>
+          <div id="doc-view">
+            <designer-document
+                id="document"
+                source="[[documentSource]]"
+                url="[[documentUrl]]"
+                text-content="{{textContent}}">
+            </designer-document>
+            <designer-breadcrumb node="{{currentNode}}"></designer-breadcrumb>
+            <designer-stage
+                id="stage"
+                document="[[document]]"
+                frame="[[frame]]"
+                current-element-info="{{currentElementInfo}}"
+                on-designer-command="_onDesignerCommand">
+              <designer-frame id="frame" document="[[domDocument]]"></designer-frame>
+            </designer-stage>
+            <pre id="html">[[textContent]]</pre>
+          </div>
+          <designer-logic-editor></designer-logic-editor>
+        </core-pages>
       </div>
     </core-header-panel>
   </template>
@@ -222,6 +238,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         _selectedNavTab: {
           type: Number,
           value: 0,
+        },
+
+        _selectedEditor: {
+          value: 2,
         },
 
       },

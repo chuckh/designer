@@ -57,6 +57,15 @@ define('polymer-designer/text/CursorManager', ['polymer-designer/text/PositionWa
       this.updateCaretX();
     }
 
+    backspace() {
+      console.log("backspace: ");
+      while (!this.walker.isAtBeginning
+          && !isLineWrap(this.walker.getCaretRange())) {
+        // this.walker.previousPosition();
+      }
+      this.updateCaretX();
+    }
+
     endOfLine() {
       while (!this.walker.isAtEnd
           && !isLineWrap(this.walker.getCaretRange())) {

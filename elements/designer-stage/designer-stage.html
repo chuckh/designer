@@ -399,6 +399,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         switch(event.keyCode) {
           // TODO(justinfagnani): consider using KeyboardEvent key names
+          case 8: // backspace
+            move = 'backspace';
+            break;
+          case 9: // tab TODO: 
+            // if (event.metaKey) {
+            //   event.preventDefault();
+            //   move = 'tabBack';
+            // } else {
+            //   move = 'tabForward';
+            // }
+            break;
+          case 33 // page up
+            break;
+          case 34 // page down
+            break;
+          case 35 // end
+            move = 'end';
+            break;
+          case 36 // home
+            move = 'home';
+            break;
           case 37: // left
             if (event.metaKey) {
               event.preventDefault();

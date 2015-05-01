@@ -57,14 +57,15 @@ define('polymer-designer/text/CursorManager', ['polymer-designer/text/PositionWa
       this.updateCaretX();
     }
 
-    backspace() {
-      console.log("backspace: ");
-      while (!this.walker.isAtBeginning
-          && !isLineWrap(this.walker.getCaretRange())) {
-        // this.walker.previousPosition();
-      }
-      this.updateCaretX();
-    }
+    // backspace() {
+    //   var rects = this.walker.getCaretRange().getClientRects();
+    //   var curCaretX = this.getCaretX();
+    //   var curCaretRange = this.walker.getCaretRange();
+    //   var orgText = curCaretRange.commonAncestorContainer.wholeText;
+    //   var newText = orgText.substr(0,curCaretRange.startOffset-1) + orgText.substr(curCaretRange.startOffset, orgText.length);
+    //   console.log("backspace: ", curCaretX, curCaretRange.startOffset, curCaretRange.endOffset, orgText, newText );
+    //   this.back(); // temp just to see a response to backspace
+    // }
 
     endOfLine() {
       while (!this.walker.isAtEnd

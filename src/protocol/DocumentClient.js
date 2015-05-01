@@ -82,6 +82,13 @@ define('polymer-designer/protocol/DocumentClient', function() {
       });
     }
 
+    backspaceText(text) {
+      return this.connection.request({
+        messageType: 'backspaceText',
+        text: text,
+      });
+    }
+
   }
 
   return DocumentClient;

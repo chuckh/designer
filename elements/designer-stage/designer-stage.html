@@ -397,12 +397,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _onKeydown(event) {
         let move;
 
+        // console.log("keyCode:", event.keyCode, event.metaKey, caret);
         switch(event.keyCode) {
           // TODO(justinfagnani): consider using KeyboardEvent key names
           case 8: // backspace
+            event.preventDefault(); // so browser won't nav back
             move = 'backspace';
             break;
-          case 9: // tab TODO: 
+          case 9: // tab TODO:
             // if (event.metaKey) {
             //   event.preventDefault();
             //   move = 'tabBack';
@@ -410,15 +412,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             //   move = 'tabForward';
             // }
             break;
-          case 33 // page up
+          case 33: // page up
             break;
-          case 34 // page down
+          case 34: // page down
             break;
-          case 35 // end
-            move = 'end';
+          case 35: // end
+            // move = 'end';
+            move = 'endOfLine';
             break;
-          case 36 // home
-            move = 'home';
+          case 36: // home
+            // move = 'home';
+            move = 'beginningOfLine';
             break;
           case 37: // left
             if (event.metaKey) {
@@ -442,14 +446,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           case 40: // down
             move = 'down';
             break;
+          case 47: // delete key on mac
+            move = 'deleteForward';
+            break;
           default:
             return;
         }
 
-        this.frame.client.moveCursor(move)
-          .then(function(response) {
-            this._updateCaret(response.rect);
-          }.bind(this));
+        if (move != 'backspace') {
+          this.frame.client.moveCursor(move)
+            .then(function(response) {
+              this._updateCaret(response.rect);
+            }.bind(this));
+        } else {
+          var keyCode = event.keyCode;
+          var char = String.fromCharCode(keyCode);
+          this.frame.client.backspaceText(char)
+            .then(function(response) {
+              this._updateCaret(response.rect);
+            }.bind(this));
+        }
       },
 
       _updateCaret(bounds) {
@@ -463,6 +479,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _onKeypress(event) {
         var keyCode = event.keyCode;
         var char = String.fromCharCode(keyCode);
+        console.log("_onKeypress: ",keyCode, char);
         this.frame.client.insertText(char)
           .then(function(response) {
             this._updateCaret(response.rect);

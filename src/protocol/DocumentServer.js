@@ -37,6 +37,7 @@ define('polymer-designer/protocol/DocumentServer', [
       connection.on('getCaretPosition', this.getCaretPosition.bind(this));
       connection.on('moveCursor', this.moveCursor.bind(this));
       connection.on('insertText', this.insertText.bind(this));
+      connection.on('backspaceText', this.backspaceText.bind(this));
       connection.on('command', this._onCommand.bind(this));
     }
 
@@ -173,6 +174,10 @@ define('polymer-designer/protocol/DocumentServer', [
         case 'endOfLine':
           this.cursorManager.endOfLine();
           break;
+        // case 'backspace':
+        //   this.cursorManager.backspace();
+
+          break;
         default:
           console.error('Unrecognized cursor move', request.message.move);
       }
@@ -196,6 +201,7 @@ define('polymer-designer/protocol/DocumentServer', [
 
     insertText(request) {
       let text = request.message.text;
+      // console.log("insertText: ",text);
 
       let node = document.createTextNode(text);
       let range = this.cursorManager.walker.getCaretRange();
@@ -203,6 +209,33 @@ define('polymer-designer/protocol/DocumentServer', [
       range.insertNode(node);
       this.cursorManager.walker.refresh();
       this.cursorManager.forward();
+
+      let rect = this.cursorManager.walker.getCaretRange()
+          .getBoundingClientRect();
+
+      node = this.cursorManager.walker.currentNode;
+      let offset = this.cursorManager.walker.localOffset;
+
+      request.reply({
+        node: pathLib.getNodePath(node),
+        offset: offset,
+        rect: {
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height,
+        },
+      });
+    }
+
+    backspaceText(request) {
+      let text = request.message.text;
+      let node = document.createTextNode(text);
+      let range = this.cursorManager.walker.getCaretRange();
+
+      range.deleteContents();
+      this.cursorManager.walker.refresh();
+      this.cursorManager.back();
 
       let rect = this.cursorManager.walker.getCaretRange()
           .getBoundingClientRect();

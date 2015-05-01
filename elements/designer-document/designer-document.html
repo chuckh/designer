@@ -84,6 +84,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true,
         },
 
+        filename: {
+          type: String,
+          notify: true,
+        },
+
         analyzer: Object,
         source: String,
         url: String,
@@ -104,6 +109,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _setDocument(content, url) {
         this.analyzer = createAnalyzer(url);
 
+        let splitUrl = url.split('/');
+        this.filename = splitUrl[splitUrl.length - 1];
+
         return Promise.all([
           this.analyzer.load(url),
           this._frameScriptAsset.load(),
@@ -118,7 +126,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               let parsedDocument = results[0];
               let metadata = results[1];
 
-              this.domDocument = createDocument(content, frameScript, this.baseURI);
+              this.domDocument = createDocument(content, frameScript, url);
               this.ast = parsedDocument.ast;
               this.elements = metadata.elements;
               this.textContent = dom5.serialize(this.ast);

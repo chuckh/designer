@@ -9,80 +9,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../../../iron-ajax/iron-request.html">
 <link rel="import" href="../../../core-asset/core-asset.html">
-<link rel="import" href="../../../core-header-panel/core-header-panel.html">
-<link rel="import" href="../../../core-pages/core-pages.html">
-<link rel="import" href="../../../core-toolbar/core-toolbar.html">
-<link rel="import" href="../../../paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../../paper-card/paper-card.html">
+<link rel="import" href="../../../paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../../iron-pages/iron-pages.html">
+<link rel="import" href="../../../paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../src/files/files.html">
 <link rel="import" href="../designer-breadcrumb/designer-breadcrumb.html">
 <link rel="import" href="../designer-document-outline/designer-document-outline.html">
-<link rel="import" href="../designer-file-tree/designer-file-tree.html">
 <link rel="import" href="../designer-inspector/designer-inspector.html">
 <link rel="import" href="../designer-mini-nav/designer-mini-nav.html">
 <link rel="import" href="../designer-stage/designer-stage.html">
+<link rel="import" href="../designer-tree/designer-tree.html">
 <link rel="import" href="../paper-tabs-vertical/paper-tabs-vertical.html">
 <link rel="import" href="../paper-tabs-vertical/paper-tab-vertical.html">
-<link rel="import" href="designer-demo-files.html">
 
 <dom-module id="designer-playground">
 
   <style>
     :host {
-      /*display: flex;
-      flex-direction: column;*/
-      box-sizing: border-box;
-    }
-    core-header-panel {
-      height: 100%;
-    }
-    #main {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: row;
       background: #eee;
-    }
-    core-toolbar {
-      background: #424242;
-      color: white;
-    }
-    #logo {
-      width: 64px;
-      height: 64px;
-      padding: 6px;
       box-sizing: border-box;
-    }
-    img.d-logo {
-      width: 48px;
-      height: 48px;
-    }
-    core-toolbar h2.d-logo {
-      opacity: 0.87;
-      font-weight: normal;
-      display: inline;
-    }
-    nav {
-      background: #252525;
-      color: #888;
       display: flex;
-      flex: 0 0 200px;
-      flex-direction: column;
-      font-size: 13px;
-      /*z-index: 100;*/
-      letter-spacing: .2px;
-      line-height: 24px;
-      /*padding: 4px 16px;*/
-      order: 0;
     }
     designer-mini-nav {
       background: #252525;
-      color: #888;
+      color: #aaa;
       width: 64px;
       height: 100%;
       position: relative;
       z-index: 200;
+      flex: 0 0 64px;
     }
     designer-mini-nav .small {
       text-align: center;
@@ -97,39 +53,81 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       box-sizing: border-box;
       font-size: 13px;
     }
-    #main > #ancillary {
-      order: 10;
+    #main {
+      display: flex;
+      flex: 1 1 0;
+      flex-direction: column;
     }
-    #main > nav > #files > a {
+    #editor {
+      display: flex;
+      flex-direction: row;
+      flex: 1 1 0;
+    }
+    paper-toolbar#toolbar {
+      background: #424242;
+      color: white;
+      flex: 0 0;
+    }
+    designer-breadcrumb {
+      background: #424242;
+      border: solid #252525;
+      border-width: 1px 0 1px 0;
+      color: #aaa;
+      font-weight: normal;
+    }
+    #logo {
+      width: 64px;
+      height: 64px;
+      padding: 6px;
+      box-sizing: border-box;
+    }
+    img.d-logo {
+      width: 48px;
+      height: 48px;
+    }
+    nav {
+      background: #252525;
+      color: #aaa;
+      display: flex;
+      flex: 0 0 200px;
+      flex-direction: column;
+      font-size: 13px;
+      /*z-index: 100;*/
+      letter-spacing: .2px;
+      line-height: 24px;
+    }
+    nav > #files > a {
       display: block;
       color: currentColor;
       text-decoration: none;
       padding: 8px;
     }
-    #main > nav > #files > a:hover {
+    nav > #files > a:hover {
       text-decoration: underline;
       cursor: pointer;
     }
-    #main > nav > designer-inspector {
-      flex: 1;
+    designer-inspector {
+      background: #252525;
+      color: #aaa;
+      display: flex;
+      flex: 0 0 200px;
+      flex-direction: column;
     }
-    #main > #doc-view {
+    #doc-view {
       display: flex;
       flex-direction: column;
       flex: 1;
-      order: 5;
     }
-    #main > #doc-view > designer-stage {
+    designer-stage {
       flex: 1;
     }
-    #main > #doc-view > #html {
+    #html {
       flex: 0 0 400px;
       border-top: solid 1px #888;
       margin: 0;
       padding: 8px;
       overflow: auto;
-      /*background: #212121;*/
-      color: #888;
+      color: #444;
     }
     #frame {
       position: absolute;
@@ -155,68 +153,67 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       box-sizing: border-box;
       border-bottom: solid 1px #444;
     }
-    paper-tab-vertical.core-selected {
+    paper-tab-vertical.iron-selected {
       color: #FFD740;
     }
   </style>
 
   <template>
-    <!-- <core-header-panel>
-      <core-toolbar class="core-header"> -->
-        <!-- <paper-icon-button icon="menu" title="menu"></paper-icon-button> -->
-        <!-- <img class="d-logo" src="PolymerLabs.png"> -->
-      <!-- </core-toolbar> -->
-      <div id="main" class="content">
-        <designer-mini-nav>
-          <div class="small">
-            <div id="logo">
-              <img class="d-logo" src="PolymerLabs.png">
-            </div>
-            <paper-tabs-vertical selected="{{_selectedNavTab}}" noink noslide nobar>
-              <paper-tab-vertical>
-                <core-icon icon="icons:folder-open"></core-icon>
-              </paper-tab-vertical>
-              <paper-tab-vertical>
-                <core-icon icon="editor:format-list-bulleted"></core-icon>
-              </paper-tab-vertical>
-            </paper-tabs-vertical>
-          </div>
-          <core-pages id="nav-detail" class="large" selected="{{_selectedNavTab}}">
-            <div>
-              <designer-file-tree on-file-data-load="_onFileDataLoad">
-                <designer-demo-files id="files"></designer-demo-files>
-              </designer-file-tree>
-            </div>
-            <div>
-              <h3>Document</h3>
-              <designer-document-outline
-                  root-node=[[domDocumentElement]]
-                  current-node="{{currentNode}}">
-              </designer-document-outline>
-              <h3>Elements</h3>
-              <ul>
-                <template is="x-repeat" items="[[elements]]">
-                  <li>[[item.is]]</li>
-                </template>
-              </ul>
-            </div>
-          </core-pages>
-        </designer-mini-nav>
-        <nav id="ancillary">
-          <designer-inspector
-              source-document="[[domDocument]]"
-              element-info="{{currentElementInfo}}">
-          </designer-inspector>
-        </nav>
+    <designer-mini-nav>
+      <div class="small">
+        <div id="logo">
+          <img class="d-logo" src="PolymerLabs.png">
+        </div>
+        <paper-tabs-vertical selected="{{_selectedNavTab}}" noink noslide nobar>
+          <paper-tab-vertical>
+            <iron-icon icon="icons:folder-open"></iron-icon>
+          </paper-tab-vertical>
+          <paper-tab-vertical>
+            <iron-icon icon="editor:format-list-bulleted"></iron-icon>
+          </paper-tab-vertical>
+        </paper-tabs-vertical>
+      </div>
+      <iron-pages id="nav-detail" class="large" selected="{{_selectedNavTab}}">
+        <div>
+          <designer-tree
+              controller="[[_fileTreeController]]"
+              data="[[_rootFile]]"
+              on-file-data-load="_onFileDataLoad">
+          </designer-tree>
+        </div>
+        <div>
+          <h3>Document</h3>
+          <designer-document-outline
+              root-node=[[domDocumentElement]]
+              current-node="{{currentNode}}">
+          </designer-document-outline>
+          <h3>Elements</h3>
+          <ul>
+            <template is="x-repeat" items="[[elements]]">
+              <li>[[item.is]]</li>
+            </template>
+          </ul>
+        </div>
+      </iron-pages>
+    </designer-mini-nav>
+    <div id="main">
+      <paper-toolbar id="toolbar" class="paper-header">
+        <span>[[filename]]</span>
+      </paper-toolbar>
+      <!-- <template is="x-if" if="{{domDocument}}">
+        <designer-breadcrumb node="{{parent.currentNode}}"></designer-breadcrumb>
+      </template> -->
+      <designer-breadcrumb node="{{currentNode}}"></designer-breadcrumb>
+      <div id="editor">
         <div id="doc-view">
           <designer-document
               id="document"
               source="[[documentSource]]"
               url="[[documentUrl]]"
               text-content="{{textContent}}"
-              elements="{{elements}}">
+              elements="{{elements}}"
+              filename="{{filename}}">
           </designer-document>
-          <designer-breadcrumb node="{{currentNode}}"></designer-breadcrumb>
           <designer-stage
               id="stage"
               document="[[document]]"
@@ -226,17 +223,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <designer-frame id="frame" document="[[domDocument]]"></designer-frame>
           </designer-stage>
           <pre id="html">[[textContent]]</pre>
-        </div>
-      </div>
-    <!-- </core-header-panel> -->
+        </div> <!-- doc-view -->
+        <template is="x-if" if="{{domDocument}}">
+          <designer-inspector
+              source-document="[[parent.domDocument]]"
+              element-info="{{parent.currentElementInfo}}">
+          </designer-inspector>
+        </template>
+      </div> <!-- editor -->
+    </div> <!-- main -->
   </template>
 
 </dom-module>
 
 <script>
 
-  define(['polymer-designer/path', 'polymer-designer/dom-utils'],
-      function(pathLib, domUtils) {
+  define([
+    'polymer-designer/path',
+    'polymer-designer/dom-utils',
+    'polymer-designer/files'],
+      function(pathLib, domUtils, files) {
     'use strict';
 
     Polymer({
@@ -321,6 +327,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // TODO(justinfagnani): move these initializers to properties:
         this.document = this.$.document;
         this.frame = this.$.frame;
+        this._fileTreeController = new files.DemoFilesTreeControl(
+          'http://localhost:8081/ls/',
+          'http://localhost:8081/files/');
+        this._fileTreeController.getInfo('polymer-designer-demos')
+          .then(function(root) {
+            this._rootFile = root;
+          }.bind(this));
       },
 
       _documentChanged() {

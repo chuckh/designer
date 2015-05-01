@@ -399,6 +399,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         switch(event.keyCode) {
           // TODO(justinfagnani): consider using KeyboardEvent key names
+          case 8: // backspace
+            event.preventDefault(); // so browser won't nav back
+            move = 'backspace';
+            break;
           case 37: // left
             if (event.metaKey) {
               event.preventDefault();
@@ -425,10 +429,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             return;
         }
 
-        this.frame.client.moveCursor(move)
-          .then(function(response) {
-            this._updateCaret(response.rect);
-          }.bind(this));
+        if (move != 'backspace') {
+          this.frame.client.moveCursor(move)
+            .then(function(response) {
+              this._updateCaret(response.rect);
+            }.bind(this));
+        } else {
+          var keyCode = event.keyCode;
+          var char = String.fromCharCode(keyCode);
+          this.frame.client.backspaceText(char)
+            .then(function(response) {
+              this._updateCaret(response.rect);
+            }.bind(this));
+        }
       },
 
       _updateCaret(bounds) {

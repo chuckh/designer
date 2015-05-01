@@ -37,6 +37,7 @@ define('polymer-designer/protocol/DocumentServer', [
       connection.on('getCaretPosition', this.getCaretPosition.bind(this));
       connection.on('moveCursor', this.moveCursor.bind(this));
       connection.on('insertText', this.insertText.bind(this));
+      connection.on('backspaceText', this.backspaceText.bind(this));
       connection.on('command', this._onCommand.bind(this));
     }
 
@@ -221,6 +222,33 @@ define('polymer-designer/protocol/DocumentServer', [
         },
       });
     }
+
+    backspaceText(request) {
+      let text = request.message.text;
+      let node = document.createTextNode(text);
+      let range = this.cursorManager.walker.getCaretRange();
+
+      range.deleteContents();
+      this.cursorManager.walker.refresh();
+      this.cursorManager.back();
+
+      let rect = this.cursorManager.walker.getCaretRange()
+          .getBoundingClientRect();
+
+      node = this.cursorManager.walker.currentNode;
+      let offset = this.cursorManager.walker.localOffset;
+
+      request.reply({
+        node: pathLib.getNodePath(node),
+        offset: offset,
+        rect: {
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height,
+        },
+      });
+    }    
 
     _resizeElement(bounds) {
       // TODO: explicitly support more display/position modes than block/absolute

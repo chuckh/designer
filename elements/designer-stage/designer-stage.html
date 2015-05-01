@@ -429,15 +429,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             return;
         }
 
-        if (move != 'backspace') {
-          this.frame.client.moveCursor(move)
+        if (move === 'backspace') {
+          var keyCode = event.keyCode;
+          this.frame.client.backspaceText()
             .then(function(response) {
               this._updateCaret(response.rect);
             }.bind(this));
         } else {
-          var keyCode = event.keyCode;
-          var char = String.fromCharCode(keyCode);
-          this.frame.client.backspaceText(char)
+          this.frame.client.moveCursor(move)
             .then(function(response) {
               this._updateCaret(response.rect);
             }.bind(this));

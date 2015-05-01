@@ -248,7 +248,7 @@ define('polymer-designer/protocol/DocumentServer', [
           height: rect.height,
         },
       });
-    }    
+    }
 
     _resizeElement(bounds) {
       // TODO: explicitly support more display/position modes than block/absolute
